@@ -3,7 +3,9 @@ import { Router } from "express";
 const adminRoutes = Router();
 
 // add admin middlewares
-adminRoutes.post('/api/v1/admin/element');
-adminRoutes.put('/api/v1/admin/element/:elementId');
-adminRoutes.post('/api/v1/admin/avatar');
-adminRoutes.post('/api/v1/admin/map');
+adminRoutes.post('/element');
+adminRoutes.put('/element/:elementId');
+adminRoutes.post('/avatar');
+adminRoutes.post('/map');
+
+export { adminRoutes }

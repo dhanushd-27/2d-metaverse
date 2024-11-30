@@ -2,6 +2,7 @@ import { Router } from "express";
 
 const userRoutes = Router();
 
-userRoutes.post('/api/v1/user/metadata');
-userRoutes.get('/api/v1/avatars');
-userRoutes.get('/api/v1/user/metadata/bulk/:ids');
+userRoutes.post('/metadata');
+userRoutes.get('/metadata/bulk/:ids');
+
+export { userRoutes }
