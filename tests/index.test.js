@@ -44,13 +44,11 @@ describe('User Creation and Authentication', () => {
         const username = `orca${Math.random()}@gmail.com`;
         const password = '@orca123'
 
-        const response = await axios.post(`${API_URL}/signup`, {
+        const response = await axios.post(`${API_URL}api/v1/signup`, {
             username,
             password,
             type: 'admin'
         })
-
-        console.log(response)
 
         expect(response.status).toBe(200);
         // expect(response.data.userId).toBeDefined();
@@ -60,32 +58,32 @@ describe('User Creation and Authentication', () => {
         const username = `orca${Math.random()}`;
         const password = '@orca123'
 
-        await axios.post(`${API_URL}api/v0/user/signup`, {
+        await axios.post(`${API_URL}api/v1/signup`, {
             username,
             password,
             type: 'admin'
         })
 
-        const response = await axios.post(`${API_URL}api/v0/user/signup`, {
+        const response = await axios.post(`${API_URL}api/v1/signup`, {
             username,
             password,
             type: 'admin'
         })
 
-        expect(response.statusCode).toBe(403);
+        expect(response.status).toBe(403);
     })
 
     test('Invalid Input', async () => {
         const username = `orca${Math.random()}`;
         const password = '123212312';
 
-        const response = await axios.post(`${API_URL}api/v0/user/signup`, {
+        const response = await axios.post(`${API_URL}api/v1/signup`, {
             username,
             password,
             type: 'admin'
         })
 
-        expect(response.statusCode).toBe(400);
+        expect(response.status).toBe(400);
     })
 
     // User SignIn Test Cases
@@ -93,50 +91,50 @@ describe('User Creation and Authentication', () => {
         const username = `orca${Math.random()}`;
         const password = '@orca123'
 
-        await axios.post(`${API_URL}api/v0/user/signup`, {
+        await axios.post(`${API_URL}api/v1/signup`, {
             username,
             password,
             type: 'admin'
         })
 
-        const response = await axios.post(`${API_URL}api/v0/user/signin`, {
+        const response = await axios.post(`${API_URL}api/v1/signin`, {
             username,
             password
         })
 
-        expect(response.statusCode).toBe(200);
-        expect(response.body.token).toBeDefined();
+        expect(response.status).toBe(200);
+        expect(response.data.token).toBeDefined();
     })
 
     test("User doesn't exist", async () => {
         const username = `orca${Math.random()}`;
         const password = '@orca123'
 
-        const response = await axios.post(`${API_URL}api/v0/user/signin`, {
+        const response = await axios.post(`${API_URL}api/v1/signin`, {
             username,
             password,
             type: 'admin'
         })
 
-        expect(response.statusCode).toBe(404);
+        expect(response.status).toBe(404);
     });
     
     test('Wrong Password', async () => {
         const username = `orca${Math.random()}`;
         const password = '@orca123'
 
-        await axios.post(`${API_URL}api/v0/user/signup`, {
+        await axios.post(`${API_URL}api/v1/signup`, {
             username,
             password,
             type: 'admin'
         })
 
-        const response = await axios.post(`${API_URL}api/v0/user/signin`, {
+        const response = await axios.post(`${API_URL}api/v1/signin`, {
             username,
             password: '12341241'
         })
 
-        expect(response.statusCode).toBe(401);
+        expect(response.status).toBe(401);
     });
 })
 
@@ -149,13 +147,13 @@ describe('User Creation and Authentication', () => {
 //         const username = `orca${Math.random()}`;
 //         const password = '@orca123'
 
-//         await axios.post(`${API_URL}api/v0/user/signup`, {
+//         await axios.post(`${API_URL}api/v1/user/signup`, {
 //             username,
 //             password,
 //             type: 'admin'
 //         })
 
-//         const response = await axios.post(`${API_URL}api/v0/user/signin`, {
+//         const response = await axios.post(`${API_URL}api/v1/user/signin`, {
 //             username,
 //             password
 //         })
@@ -177,13 +175,13 @@ describe('User Creation and Authentication', () => {
 //         const userUsername = `orca${Math.random()}`;
 //         const userPassword = '@orca123';
 
-//         await axios.post(`${API_URL}api/v0/user/signup`, {
+//         await axios.post(`${API_URL}api/v1/user/signup`, {
 //             username: userUsername,
 //             password: userPassword,
 //             type: 'user'
 //         })
 
-//         const userResponse = await axios.post(`${API_URL}api/v0/user/signin`, {
+//         const userResponse = await axios.post(`${API_URL}api/v1/user/signin`, {
 //             username: userUsername,
 //             password: userPassword
 //         })
@@ -203,7 +201,7 @@ describe('User Creation and Authentication', () => {
 //             }
 //         })
 
-//         expect(response.statusCode).toBe(200);
+//         expect(response.status).toBe(200);
 //     });
 
 //     test('User should not be able to update metadata without valid avatar id', async () => {
@@ -216,7 +214,7 @@ describe('User Creation and Authentication', () => {
 //             }
 //         })
 
-//         expect(response.statusCode).toBe(400);
+//         expect(response.status).toBe(400);
 //     })
     
 //     test("Unauthorised should not be able to update metadata if headers is not present", async () => {
@@ -224,7 +222,7 @@ describe('User Creation and Authentication', () => {
 //             "avatarId": "1235235232323",
 //         })
 
-//         expect(response.statusCode).toBe(403);
+//         expect(response.status).toBe(403);
 //     })
 // })
 
@@ -236,7 +234,7 @@ describe('User Creation and Authentication', () => {
 //         const username = `orca${Math.random()}`;
 //         const password = '@orca123'
 
-//         const response = await axios.post(`${API_URL}api/v0/user/signup`, {
+//         const response = await axios.post(`${API_URL}api/v1/user/signup`, {
 //             username,
 //             password,
 //             type: 'admin'
@@ -244,7 +242,7 @@ describe('User Creation and Authentication', () => {
 
 //         userId = response.data.userId;
 
-//         await axios.post(`${API_URL}api/v0/user/signin`, {
+//         await axios.post(`${API_URL}api/v1/user/signin`, {
 //             username,
 //             password
 //         })
@@ -264,7 +262,7 @@ describe('User Creation and Authentication', () => {
 
 //     test('Get back avatar information for a user', async () => {
 //         const response = await axios.get(`${API_URL}/api/v1/user/metadata/bulk?ids=[${userId}]`);
-//         expect(response.statusCode).toBe(200);
+//         expect(response.status).toBe(200);
 //         expect(response.data.avatars[0].userId).toBe(userId);
 //     })
     
@@ -289,13 +287,13 @@ describe('User Creation and Authentication', () => {
 //         const username = `orca${Math.random()}`;
 //         const password = '@orca123'
 
-//         await axios.post(`${API_URL}api/v0/user/signup`, {
+//         await axios.post(`${API_URL}api/v1/user/signup`, {
 //             username,
 //             password,
 //             type: 'admin'
 //         })
 
-//         const response = await axios.post(`${API_URL}api/v0/user/signin`, {
+//         const response = await axios.post(`${API_URL}api/v1/user/signin`, {
 //             username,
 //             password
 //         })
@@ -366,13 +364,13 @@ describe('User Creation and Authentication', () => {
 //         const userUsername = `orca${Math.random()}`;
 //         const userPassword = '@orca123';
 
-//         await axios.post(`${API_URL}api/v0/user/signup`, {
+//         await axios.post(`${API_URL}api/v1/user/signup`, {
 //             username: userUsername,
 //             password: userPassword,
 //             type: 'user'
 //         })
 
-//         const userResponse = await axios.post(`${API_URL}api/v0/user/signin`, {
+//         const userResponse = await axios.post(`${API_URL}api/v1/user/signin`, {
 //             username: userUsername,
 //             password: userPassword
 //         })
@@ -395,8 +393,8 @@ describe('User Creation and Authentication', () => {
 //             }
 //         });
 
-//         expect(response.statusCode).toBe(200);
-//         expect(response.body.spaceId).toBeDefined();
+//         expect(response.status).toBe(200);
+//         expect(response.data.spaceId).toBeDefined();
 //     });
 
 //     test("User should not be able to create a space without dimensions and mapId", async () => {
@@ -410,7 +408,7 @@ describe('User Creation and Authentication', () => {
 //             }
 //         });
 
-//         expect(response.statusCode).toBe(400);
+//         expect(response.status).toBe(400);
 //     });
 
 //     // User to delete a space
@@ -435,7 +433,7 @@ describe('User Creation and Authentication', () => {
 //             }
 //         });
 
-//         expect(deleteResponse.statusCode).toBe(200);
+//         expect(deleteResponse.status).toBe(200);
 //     });
 
 //     test("User should not be able to delete a space which doesn't exists", async () => {
@@ -448,7 +446,7 @@ describe('User Creation and Authentication', () => {
 //             }
 //         });
 
-//         expect(deleteResponse.statusCode).toBe(400);
+//         expect(deleteResponse.status).toBe(400);
 //     });
 
 //     test("Unauthorised user should not be able to delete a space which is not created by them", async () => {
@@ -472,7 +470,7 @@ describe('User Creation and Authentication', () => {
 //             }
 //         });
 
-//         expect(deleteResponse.statusCode).toBe(400);
+//         expect(deleteResponse.status).toBe(400);
 //     });
 
 //     // Get Existed Spaces
@@ -522,13 +520,13 @@ describe('User Creation and Authentication', () => {
 //         const username = `orca${Math.random()}`;
 //         const password = '@orca123'
 
-//         await axios.post(`${API_URL}api/v0/user/signup`, {
+//         await axios.post(`${API_URL}api/v1/user/signup`, {
 //             username,
 //             password,
 //             type: 'admin'
 //         })
 
-//         const response = await axios.post(`${API_URL}api/v0/user/signin`, {
+//         const response = await axios.post(`${API_URL}api/v1/user/signin`, {
 //             username,
 //             password
 //         })
@@ -599,13 +597,13 @@ describe('User Creation and Authentication', () => {
 //         const userUsername = `orca${Math.random()}`;
 //         const userPassword = '@orca123';
 
-//         await axios.post(`${API_URL}api/v0/user/signup`, {
+//         await axios.post(`${API_URL}api/v1/user/signup`, {
 //             username: userUsername,
 //             password: userPassword,
 //             type: 'user'
 //         })
 
-//         const userResponse = await axios.post(`${API_URL}api/v0/user/signin`, {
+//         const userResponse = await axios.post(`${API_URL}api/v1/user/signin`, {
 //             username: userUsername,
 //             password: userPassword
 //         })
@@ -635,7 +633,7 @@ describe('User Creation and Authentication', () => {
 //             }
 //         })
 
-//         expect(response.statusCode).toBe(200);
+//         expect(response.status).toBe(200);
 //         expect(response.data.dimensions).toBeDefined();
 //         expect(response.data.elements.length).toBe(3);
 //     });
@@ -648,7 +646,7 @@ describe('User Creation and Authentication', () => {
 //             }
 //         })
 
-//         expect(response.statusCode).toBe(400);
+//         expect(response.status).toBe(400);
 //     });
 
 //     test("Delete an element from the space", async () => {
@@ -672,7 +670,7 @@ describe('User Creation and Authentication', () => {
 //             }
 //         });
 
-//         expect(deleteResponse.statusCode).toBe(200);
+//         expect(deleteResponse.status).toBe(200);
 //         expect(response.data.elements.length).toBe(2);
 //     });
 
@@ -689,7 +687,7 @@ describe('User Creation and Authentication', () => {
 //             }
 //         })
 
-//         expect(response.statusCode).toBe(400);
+//         expect(response.status).toBe(400);
 //     })
 
 //     test("Adding an element successfully", async () => {
@@ -705,7 +703,7 @@ describe('User Creation and Authentication', () => {
 //             }
 //         })
 
-//         expect(response.statusCode).toBe(200);
+//         expect(response.status).toBe(200);
 //         expect(response.data.elements.length).toBe(3);
 //     })
 // })
@@ -722,7 +720,7 @@ describe('User Creation and Authentication', () => {
 //         const username = `orca${Math.random()}`;
 //         const password = '@orca123'
 
-//         const signUpResponse = await axios.post(`${API_URL}api/v0/user/signup`, {
+//         const signUpResponse = await axios.post(`${API_URL}api/v1/user/signup`, {
 //             username,
 //             password,
 //             type: 'admin'
@@ -730,7 +728,7 @@ describe('User Creation and Authentication', () => {
 
 //         adminId = signUpResponse.data.id;
 
-//         const response = await axios.post(`${API_URL}api/v0/user/signin`, {
+//         const response = await axios.post(`${API_URL}api/v1/user/signin`, {
 //             username,
 //             password
 //         })
@@ -742,7 +740,7 @@ describe('User Creation and Authentication', () => {
 //         const userUsername = `orca${Math.random()}`;
 //         const userPassword = '@orca123';
 
-//         const userSignUpResponse = await axios.post(`${API_URL}api/v0/user/signup`, {
+//         const userSignUpResponse = await axios.post(`${API_URL}api/v1/user/signup`, {
 //             username: userUsername,
 //             password: userPassword,
 //             type: 'user'
@@ -750,7 +748,7 @@ describe('User Creation and Authentication', () => {
 
 //         userId = userSignUpResponse.data.id;
 
-//         const userResponse = await axios.post(`${API_URL}api/v0/user/signin`, {
+//         const userResponse = await axios.post(`${API_URL}api/v1/user/signin`, {
 //             username: userUsername,
 //             password: userPassword
 //         })
@@ -818,10 +816,10 @@ describe('User Creation and Authentication', () => {
 //             }
 //         })
 
-//         expect(createElementResponse.statusCode).toBe(403);
-//         expect(updateElementResponse.statusCode).toBe(403);
-//         expect(createAvater.statusCode).toBe(403);
-//         expect(createMap.statusCode).toBe(403);
+//         expect(createElementResponse.status).toBe(403);
+//         expect(updateElementResponse.status).toBe(403);
+//         expect(createAvater.status).toBe(403);
+//         expect(createMap.status).toBe(403);
 //     })
 
 //     test("An admin be able to hit admin end points", async () => {
@@ -873,10 +871,10 @@ describe('User Creation and Authentication', () => {
 //             }
 //         })
 
-//         expect(createElementResponse.statusCode).toBe(200);
-//         expect(updateElementResponse.statusCode).toBe(200);
-//         expect(createAvater.statusCode).toBe(200);
-//         expect(createMap.statusCode).toBe(200);
+//         expect(createElementResponse.status).toBe(200);
+//         expect(updateElementResponse.status).toBe(200);
+//         expect(createAvater.status).toBe(200);
+//         expect(createMap.status).toBe(200);
 //     })
 
 //     test("An Admin should be able to update an element", async () => {

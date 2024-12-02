@@ -76,7 +76,8 @@ export const signIn = async (req: Request, res: Response) => {
 
         const token = jwt.sign({
             id: user.id,
-            username: parsedData.data.username
+            username: parsedData.data.username,
+            role: user.role
         }, process.env.JWT_SECRET as string)
 
         res.status(200).json({
