@@ -3,8 +3,13 @@ import { spaceRoutes } from "./routes/space.routes";
 import { adminRoutes } from "./routes/admin.routes";
 import { generalRoutes } from "./routes/general.routes";
 import { userRoutes } from "./routes/user.routes";
+import dotenv from "dotenv"
+
+dotenv.config()
 
 const app = express();
+
+app.use(express.json());
 
 app.use('', generalRoutes);
 app.use('/user', userRoutes)
