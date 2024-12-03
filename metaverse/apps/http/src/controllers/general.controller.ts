@@ -9,8 +9,7 @@ export const signUp = async (req: Request, res: Response) => {
     if(!parsedData.success){
         res.status(400).json({
             message: "Input Validation Failed",
-            error: parsedData.error,
-            data: parsedData.data
+            body: req.body
         })
         return
     }
@@ -28,7 +27,7 @@ export const signUp = async (req: Request, res: Response) => {
             userId: user.id
         })
     } catch (error) {
-        res.status(400).json({
+        res.status(403).json({
             message: "User Already Exists"
         })
     }
@@ -37,36 +36,36 @@ export const signUp = async (req: Request, res: Response) => {
 export const signIn = async (req: Request, res: Response) => {
 
     const parsedData = SigninSchema.safeParse(req.body);
-
+    
     if(!parsedData.success){
         res.status(400).json({
-            message: "Input Validation Failer"
+            message: "Input Validation Failed",
+            body: req.body
         })
         return
     }
 
     try {
-        const user = await client.user.findUnique({
+        const user = await client.user.findFirst({
             where: {
                 username: parsedData.data.username
             }
         })
 
         if(!user){
-            res.status(400).json({
-                message: "User Not Found"
+            console.log(parsedData.data);
+            
+            res.status(404).json({
+                message: "User Not Found",
             })
             return;
         }
 
-        const isValid = (): Boolean => {
-            if(user.password == parsedData.data.password){
-                return true;
-            }
-
-            return false
+        let isValid = false;
+        if(user.password == parsedData.data.password){
+            isValid = true;
         }
-
+        
         if(!isValid){
             res.status(403).json({
                 message: "Unauthorized User"
@@ -81,7 +80,7 @@ export const signIn = async (req: Request, res: Response) => {
         }, process.env.JWT_SECRET as string)
 
         res.status(200).json({
-            message: "Sign Up Successfull",
+            message: "Sign In Successfull",
             token
         })
     } catch (error) {
