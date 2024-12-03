@@ -11,7 +11,7 @@ export const SigninSchema = z.object({
     password: z.string().min(8)
 })
 
-export const updateMetadata = z.object({
+export const updateMetadataSchema = z.object({
     avatarId: z.string()
 })
 
@@ -53,4 +53,8 @@ export const createMapSchema = z.object({
         x: z.number(),
         y: z.number()
     }))
+})
+
+export const deleteElementSchema = z.object({
+    id: z.string(),
 })

@@ -58,6 +58,7 @@ model Element {
   width    Int
   height   Int
   imageUrl String
+  static   Boolean
 
   // an element can be in multiple spaces and multiple maps
   SpaceElements SpaceElements[]
