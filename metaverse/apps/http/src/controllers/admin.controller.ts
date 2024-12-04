@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import {  createAvatarSchema, createElementSchema, createMapSchema, updateElementSchema } from "../types/types";
 import client from '@repo/db/client';
 
-export const addElement = async (req: Request, res: Response) => {
+export const createElement = async (req: Request, res: Response) => {
   const parsedData = createElementSchema.safeParse(req.body);
 
   if(!parsedData.success){

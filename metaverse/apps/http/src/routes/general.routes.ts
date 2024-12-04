@@ -1,13 +1,11 @@
 import { Router } from "express";
-import { signIn, signUp } from "../controllers/general.controller";
+import { getAllAvatars, getAllElements, signIn, signUp } from "../controllers/general.controller";
 
 const generalRoutes = Router();
 
 generalRoutes.post('/signup', signUp);  //, signUp
 generalRoutes.post('/signin', signIn);
-generalRoutes.get('/elements', (req, res) => {
-    res.send("Hello TurboRepo");
-});
-generalRoutes.get('/avatars');
+generalRoutes.get('/elements', getAllElements);
+generalRoutes.get('/avatars', getAllAvatars);
 
 export { generalRoutes }

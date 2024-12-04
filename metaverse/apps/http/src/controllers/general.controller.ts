@@ -90,3 +90,27 @@ export const signIn = async (req: Request, res: Response) => {
         })
     }
 }
+
+export const getAllElements = async (req: Request, res: Response) => {
+    
+    const allElements = await client.element.findMany();
+
+    res.json({elements: allElements.map(e => ({
+        id: e.id,
+        imageUrl: e.imageUrl,
+        width: e.width,
+        height: e.height,
+        static: e.static
+    }))})
+}
+
+export const getAllAvatars = async (req: Request, res: Response) => {
+
+    const allAvatars = await client.avatar.findMany();
+
+    res.json({avatars: allAvatars.map(x => ({
+        id: x.id,
+        imageUrl: x.imageUrl,
+        name: x.name
+    }))})
+}
