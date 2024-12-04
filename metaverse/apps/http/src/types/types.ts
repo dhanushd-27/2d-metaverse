@@ -1,4 +1,4 @@
-import { z } from "zod"
+import { optional, z } from "zod"
 
 export const SignupSchema = z.object({
     username: z.string().email(),
@@ -17,8 +17,8 @@ export const updateMetadataSchema = z.object({
 
 export const createSpaceSchema = z.object({
     name: z.string(),
-    dimensions: z.string().regex(/^[0-9]{1,4}x[0-9]{1,4}$/),
-    mapId: z.string()
+    dimensions: z.string().regex(/^[0-9]{1,4}x[0-9]{1,4}$/).optional(),
+    mapId: z.string().optional()
 })
 
 export const addElementSchema = z.object({

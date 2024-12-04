@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import { addElementSchema, createSpaceSchema, deleteElementSchema } from "../types/types";
 import client from '@repo/db/client';
 
-// make changes bhai
+// make changes bhai - done, Learnt about transaction
 export const createSpace = async (req: Request, res: Response ) => {
   const parsedData = createSpaceSchema.safeParse(req.body);
   const creatorId = req.userId as string;
@@ -13,27 +13,72 @@ export const createSpace = async (req: Request, res: Response ) => {
     })
   }
 
-  try {
-    const dimensions = parsedData.data?.dimensions.split('x') as string[];
+  if(!parsedData.data?.mapId && parsedData.data?.dimensions){
+    try {
+      const dimensions = parsedData.data?.dimensions.split('x') as string[];
+  
+      const createSpace = await client.space.create({
+        data: {
+          name: parsedData.data?.name as string,
+          creatorId: creatorId,
+          width: parseInt(dimensions[0]),
+          height: parseInt(dimensions[1]),
+        }
+      })
+  
+      res.status(200).json({
+        spaceId: createSpace.id
+      })
+    } catch (error) {
+      res.status(500).json({
+        message: "DataBase error, could not create Space",
+      });
+      return;
+    }
+  }
 
-    const createSpace = await client.space.create({
+  const map = await client.map.findFirst({
+    where: {
+      id: parsedData.data?.mapId
+    }, select: {
+      mapElements: true,
+      height: true,
+      width: true,
+    }
+  })
+
+  if(!map){
+    res.status(400).json({
+      message: "Map is not found"
+    })
+    return
+  }
+
+  const createSpaceResponse = await client.$transaction( async (client) => {
+    const space = await client.space.create({
       data: {
         name: parsedData.data?.name as string,
-        creatorId: creatorId,
-        width: parseInt(dimensions[0]),
-        height: parseInt(dimensions[1]),
+        height: map?.height as number,
+        width: map?.width as number,
+        creatorId: req.userId as string
       }
+    });
+
+    await client.spaceElements.createMany({
+      data: map.mapElements.map(e => ({
+          spaceId: space.id,
+          elementId: e.elementId,
+          x: e.x!,
+          y: e.y!
+      }))
     })
 
-    res.status(200).json({
-      spaceId: createSpace.id
-    })
-  } catch (error) {
-    res.status(500).json({
-      message: "DataBase error, could not create Space",
-    });
-    return;
-  }
+    return space;
+  })
+
+  res.status(200).json({
+    spaceId: createSpaceResponse.id
+  })
 }
 
 // ask harshit
@@ -184,11 +229,12 @@ export const removeElement = async (req: Request, res: Response) => {
   if (!spaceElement?.space.creatorId || spaceElement.space.creatorId !== req.userId) {
     res.status(403).json({message: "Unauthorized"})
     return
-}
-await client.spaceElements.delete({
-    where: {
-        id: parsedData.data?.id
-    }
-})
-res.json({message: "Element deleted"})
+  }
+
+  await client.spaceElements.delete({
+      where: {
+          id: parsedData.data?.id
+      }
+  })
+  res.json({message: "Element deleted"})
 }

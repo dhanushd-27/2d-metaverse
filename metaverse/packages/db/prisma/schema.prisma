@@ -70,6 +70,7 @@ model Map {
   width  Int
   height Int
   name   String
+  thumbnail String
 
   // A map can have multiple map elements
   mapElements MapElements[]
