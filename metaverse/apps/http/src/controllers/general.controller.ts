@@ -15,6 +15,7 @@ export const signUp = async (req: Request, res: Response) => {
     }
 
     try {
+        
         const user = await client.user.create({
             data: {
                 username: parsedData.data.username,
@@ -27,6 +28,9 @@ export const signUp = async (req: Request, res: Response) => {
             userId: user.id
         })
     } catch (error) {
+        console.log(error);
+        
+
         res.status(403).json({
             message: "User Already Exists"
         })
@@ -46,7 +50,7 @@ export const signIn = async (req: Request, res: Response) => {
     }
 
     try {
-        const user = await client.user.findFirst({
+        const user = await client.user.findUnique({
             where: {
                 username: parsedData.data.username
             }
@@ -57,6 +61,7 @@ export const signIn = async (req: Request, res: Response) => {
             
             res.status(404).json({
                 message: "User Not Found",
+                
             })
             return;
         }
@@ -105,7 +110,6 @@ export const getAllElements = async (req: Request, res: Response) => {
 }
 
 export const getAllAvatars = async (req: Request, res: Response) => {
-
     const allAvatars = await client.avatar.findMany();
 
     res.json({avatars: allAvatars.map(x => ({

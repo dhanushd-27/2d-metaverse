@@ -11,6 +11,16 @@ export const createSpace = async (req: Request, res: Response ) => {
     res.status(400).json({
       message: "Invalid Data"
     })
+
+    return
+  }
+
+  if(!parsedData.data?.mapId && !parsedData.data?.dimensions){
+    res.status(400).json({
+      message: "Cannot create space without dimensions and mapId"
+    })
+
+    return
   }
 
   if(!parsedData.data?.mapId && parsedData.data?.dimensions){
@@ -29,10 +39,14 @@ export const createSpace = async (req: Request, res: Response ) => {
       res.status(200).json({
         spaceId: createSpace.id
       })
+
+      return;
+
     } catch (error) {
       res.status(500).json({
         message: "DataBase error, could not create Space",
       });
+
       return;
     }
   }
@@ -83,14 +97,37 @@ export const createSpace = async (req: Request, res: Response ) => {
 
 // ask harshit
 export const deleteSpace = async (req: Request, res: Response) => {
-  const spaceId = req.query.spaceId as string;
+  const spaceId = req.params.spaceId as string;
   const userId = req.userId as string;
 
   try {
+    const response = await client.space.findUnique({
+      where: {
+        id: spaceId
+      }, select: {
+        creatorId: true
+      }
+    })
+
+    if(!response){
+      res.status(400).json({
+        message: "space doesn't exist with this space id"
+      });
+      
+      return;
+    }
+
+    if(response?.creatorId !== userId){
+      res.status(403).json({
+        message: "Unauthorized User"
+      })
+
+      return;
+    }
+
     await client.space.delete({
       where: {
-        id: spaceId,
-        creatorId: userId
+        id: spaceId
       }
     });
 
@@ -115,6 +152,8 @@ export const getAllSpaces = async (req: Request, res: Response) => {
     }
   })
 
+  console.log(spaces);
+
   res.status(200).json({
     spaces: spaces.map((s) => ({
       id: s.id,
@@ -126,11 +165,19 @@ export const getAllSpaces = async (req: Request, res: Response) => {
 }
 
 export const getSpace = async (req: Request, res: Response) => {
-  const spaceId = req.query.spaceId as string;
+  const spaceId = req.params.spaceId;
+  
+  if(!spaceId){
+    res.status(401).json({
+      message: "invalid data input"
+    })
+
+    return;
+  }
 
   const spaces = await client.space.findUnique({
     where: {
-      id: spaceId
+      id: spaceId as string
     },
     include: {
       SpaceElements: {
@@ -145,6 +192,8 @@ export const getSpace = async (req: Request, res: Response) => {
     res.status(400).json({
       message: "Space not found"
     })
+
+    return
   }
 
   res.status(200).json({
@@ -189,15 +238,19 @@ export const addElement = async (req: Request, res: Response) => {
     res.status(400).json({
       message: "element position out of bound"
     })
+
+    return
   }
 
   if(!space){
     res.status(400).json({
       message: "Space doesn't exists"
     })
+
+    return
   }
 
-  await client.spaceElements.create({
+  const response = await client.spaceElements.create({
     data: {
       spaceId: parsedData.data.spaceId,
       elementId: parsedData.data.elementId,
@@ -206,28 +259,49 @@ export const addElement = async (req: Request, res: Response) => {
     }
   });
 
-  res.status(200).json({message: "Element added"})
+  const getSpaceEle = await client.spaceElements.findMany({
+    where: {
+      spaceId: parsedData.data.spaceId
+    }
+  });
+
+  res.status(200).json({
+    message: "Element added",
+    elements: getSpaceEle
+  })
 }
 
 export const removeElement = async (req: Request, res: Response) => {
+
   const parsedData = deleteElementSchema.safeParse(req.body);
 
-  if(!parsedData){
+  if(!parsedData.success){
     res.status(400).json({
-      message: "Invalid Input"
+      message: "Invalid Input",
+      parsedData: parsedData.data
     })
+
+    return
   }
 
   const spaceElement = await client.spaceElements.findFirst({
     where: {
       id: parsedData.data?.id
     }, include: {
-      space: true
+      space: true,
     }
   })
 
-  if (!spaceElement?.space.creatorId || spaceElement.space.creatorId !== req.userId) {
-    res.status(403).json({message: "Unauthorized"})
+  if(!spaceElement){
+    res.status(403).json({message: "Space element not found"})
+    return
+  }
+
+  if (spaceElement.space.creatorId !== req.userId) {
+    console.log(spaceElement.space.creatorId);
+    console.log(req.userId)
+
+    res.status(403).json({message: "You are not the creator"})
     return
   }
 
@@ -236,5 +310,7 @@ export const removeElement = async (req: Request, res: Response) => {
           id: parsedData.data?.id
       }
   })
-  res.json({message: "Element deleted"})
+  res.status(200).json(
+    {message: "Element deleted"}
+  );
 }

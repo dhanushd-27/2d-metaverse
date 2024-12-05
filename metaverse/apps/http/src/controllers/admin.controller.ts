@@ -35,7 +35,7 @@ export const createElement = async (req: Request, res: Response) => {
 
 export const updateElement = async (req: Request, res: Response) => {
   const parseData = updateElementSchema.safeParse(req.body);
-  const adminId = req.userId as string;
+  const elementId = req.params.elementId;
 
   if(!parseData.success){
     res.status(400).json({
@@ -45,15 +45,17 @@ export const updateElement = async (req: Request, res: Response) => {
   }
 
   try {
-    await client.element.update({
+    const response = await client.element.update({
       where: {
-        id: adminId
+        id: elementId,
       },
       data: {
         imageUrl: parseData.data.imageUrl
       }
     })
   
+    console.log(response)
+
     res.status(200).json({
       message: "Element Updated Successfully"
     })
@@ -76,7 +78,7 @@ export const createAvatar = async (req: Request, res: Response) => {
   }
 
   try {
-    await client.avatar.create({
+    const response = await client.avatar.create({
       data: {
         imageUrl: parsedData.data.imageUrl,
         name: parsedData.data.name
@@ -84,7 +86,8 @@ export const createAvatar = async (req: Request, res: Response) => {
     })
 
     res.status(200).json({
-      message: "Avatar created successfully"
+      message: "Avatar created successfully",
+      avatarId: response.id
     })
   } catch (error) {
     res.status(500).json({

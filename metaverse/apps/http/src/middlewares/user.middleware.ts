@@ -4,9 +4,9 @@ import jwt from "jsonwebtoken"
 export const userMiddleware = (req: Request, res: Response, next: NextFunction) => {
   const header = req.headers.authorization;
   const token = header?.split(" ")[1];
-
   if(!token){
-    res.status(401).json({
+    console.log(header);
+    res.status(403).json({
       message: "Unauthorized"
     })
 

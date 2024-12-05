@@ -28,6 +28,8 @@ export const updateMetadata = async (req: Request, res: Response) => {
       res.status(400).json({
         message: "Avatar Id Doesn't exist"
       })
+
+      return
     }
   
     // update content if avatar id exists

@@ -5,13 +5,13 @@ import { addElement, createSpace, deleteSpace, getAllSpaces, getSpace, removeEle
 const spaceRoutes = Router();
 
 spaceRoutes.post('/', userMiddleware, createSpace);
+spaceRoutes.delete('/element', userMiddleware, removeElement);
 spaceRoutes.delete('/:spaceId', userMiddleware, deleteSpace);
-spaceRoutes.get('/all'), userMiddleware, getAllSpaces;
+spaceRoutes.get('/all', userMiddleware, getAllSpaces);
 
 // arena routes
 // anyone can see your space or you can see anyone's space with spaceid
 spaceRoutes.get('/:spaceId', getSpace);
 spaceRoutes.post('/element', userMiddleware, addElement);
-spaceRoutes.delete('/element', userMiddleware, removeElement);
 
 export { spaceRoutes }
